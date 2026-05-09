@@ -1,17 +1,19 @@
 package com.example.emailsender.Controllers;
 
+import java.util.concurrent.BlockingQueue;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.emailsender.Services.MailService;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.example.emailsender.Models.EmailSend;
 
 @RestController
 @RequestMapping("/email")
 public class emailController {
 
     @Autowired
-    private MailService emailService;
+    private BlockingQueue<EmailSend> queue;
 
     @GetMapping("/health")
     public String health() {
@@ -19,11 +21,8 @@ public class emailController {
     }
 
     @PostMapping("/send")
-    public String sendMail(@RequestBody String to) {
-        emailService.sendSimpleEmail(
-                to,
-                "Test Email",
-                "Hello, your email is working successfully!");
-        return "Email sent!";
+    public ResponseEntity<?> sendMail(@RequestBody EmailSend emailSend) {
+        queue.offer(emailSend);
+        return ResponseEntity.ok("Queued !");
     }
 }
