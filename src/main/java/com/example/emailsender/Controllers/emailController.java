@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.emailsender.Models.EmailSend;
+import com.example.emailsender.Publisher.RabbitProducer;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/email")
@@ -14,6 +17,15 @@ public class emailController {
 
     @Autowired
     private BlockingQueue<EmailSend> queue;
+
+    @Autowired
+    private RabbitProducer rabbitProducer;
+
+    @GetMapping("/rabbit/publish{message}")
+    public ResponseEntity<String> getMethodName(@RequestParam String message) {
+        rabbitProducer.sendMessage(message);
+        return ResponseEntity.ok("Message sent to RabbitMQ server... ");
+    }
 
     @GetMapping("/health")
     public String health() {
