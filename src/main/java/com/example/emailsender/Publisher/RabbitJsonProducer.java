@@ -6,7 +6,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.example.emailsender.Models.User;
+import com.example.emailsender.Models.Email;
 
 @Service
 public class RabbitJsonProducer {
@@ -25,7 +25,7 @@ public class RabbitJsonProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendMessage(User user) {
+    public void sendMessage(Email user) {
         LOGGER.info(String.format("Json Object sent to -> %s", user.toString()));
         rabbitTemplate.convertAndSend(exchangeName, routingJsonKey, user);
     }

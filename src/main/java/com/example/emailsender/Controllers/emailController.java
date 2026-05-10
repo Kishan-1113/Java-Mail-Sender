@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.emailsender.Models.EmailSend;
-import com.example.emailsender.Models.User;
+import com.example.emailsender.Models.Email;
 import com.example.emailsender.Publisher.RabbitJsonProducer;
 import com.example.emailsender.Publisher.RabbitProducer;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +26,14 @@ public class EmailController {
     @Autowired
     private RabbitJsonProducer rabbitJsonProducer;
 
-    @GetMapping("/rabbit/string{message}")
-    public ResponseEntity<String> getMethodName(@RequestParam String message) {
-        rabbitProducer.sendMessage(message);
+    @GetMapping("/address{to}")
+    public ResponseEntity<String> getMethodName(@RequestParam String to) {
+        rabbitProducer.sendMessage(to);
         return ResponseEntity.ok("Message sent to RabbitMQ server... ");
     }
 
-    @PostMapping("/rabbit/json")
-    public ResponseEntity<String> getMethodName(@RequestBody User user) {
+    @PostMapping("/send")
+    public ResponseEntity<String> getMethodName(@RequestBody Email user) {
         rabbitJsonProducer.sendMessage(user);
         return ResponseEntity.ok("Json message sent to RabbitMQ server...");
     }
@@ -43,7 +43,7 @@ public class EmailController {
         return new String("Hello, how are you? I am fine !");
     }
 
-    @PostMapping("/send")
+    @PostMapping("/queue/send")
     public ResponseEntity<?> sendMail(@RequestBody EmailSend emailSend) {
         queue.offer(emailSend);
         return ResponseEntity.ok("Queued !");

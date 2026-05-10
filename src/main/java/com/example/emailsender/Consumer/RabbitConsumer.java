@@ -6,7 +6,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.emailsender.Models.User;
+import com.example.emailsender.Models.Email;
 import com.example.emailsender.Services.MailService;
 
 @Service
@@ -30,9 +30,14 @@ public class RabbitConsumer {
 
     // Listening to the second queue
     @RabbitListener(queues = { "${rabbitmq.queue.json.name}" })
-    public void consumer1(User message) {
+    public void consumer1(Email email) {
 
-        LOGGER.info(String.format("User class consumer in action -> %s", message));
+        LOGGER.info(String.format("User class consumer in action -> %s", email));
+
+        eMailService.sendSimpleEmail(
+                email.getSendTo(),
+                email.getSubject(),
+                email.getContent());
 
     }
 }
